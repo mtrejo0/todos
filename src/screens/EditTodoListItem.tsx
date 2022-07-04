@@ -1,6 +1,6 @@
 import { Todo } from "../types/types";
 import Todos from "../models/Todos"
-import { Button, Card, Checkbox, Chip, Grid } from "@mui/material";
+import { Button, Card, Grid } from "@mui/material";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,10 +18,8 @@ function TodoListItem({ todo }: PropsTypes) {
     Todos.delete(todo!.id!)
   }
 
-  const editTodo = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    const newValue = (e.target as HTMLInputElement).checked
-    Todos.update(todo!, { done: newValue })
+  const editTodo = () => {
+    Todos.delete(todo!.id!)
   }
 
   const toggleEdit = () => {
@@ -31,22 +29,16 @@ function TodoListItem({ todo }: PropsTypes) {
   return (
     <Card sx={{ padding: "16px", margin: "8px" }}>
       <Grid container spacing={12}>
-        <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
-          <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
-          <p>{todo?.task}</p>
-        </Grid>
-        <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
+        <Grid item xs={3}>
+            {todo?.task}
+          </Grid>
+        <Grid item xs={3}>
           <Button onClick={deleteTodo} variant="contained"><DeleteIcon /></Button>
+        </Grid>
+        <Grid item xs={3} direction="row-reverse">
           <Button onClick={toggleEdit} variant="contained" ><EditIcon /></Button>
         </Grid>
-      </Grid>
-      <Grid container spacing={12}>
-        <Grid item xs={12}>
-          <Chip label="Chip Filled" />
-          <Chip label="Chip Filled" />
-          <Chip label="Chip Filled" />
         </Grid>
-      </Grid>
     </Card>
   );
 }

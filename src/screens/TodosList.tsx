@@ -9,14 +9,16 @@ function TodosList() {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
-    const q = query(Todos.todosCollection)
-    onSnapshot(q, (querySnapshot) => {
+    // const q = query(Todos.todosCollection)
+    const unsubscribe = onSnapshot(Todos.todosCollection, (querySnapshot) => {
       setTodos(querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })))
     })
-  })
+
+    return () => unsubscribe()
+  }, [todos, setTodos])
 
   return (
     <div>

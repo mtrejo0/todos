@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Todos from "../models/Todos"
+import { TagInput } from "./TagsInput";
 
 
 function TodoForm() {
   const [value, setValue] = useState("");
+  const [tags, setTags] = useState([]);
   const createTodo = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
     Todos.add(value)
@@ -20,6 +22,7 @@ function TodoForm() {
         label="Add Todo"
         variant="outlined"
       />
+      <TagInput />
     </form>
   );
 }
