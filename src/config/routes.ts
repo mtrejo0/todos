@@ -1,3 +1,4 @@
+import ErrorPage from "../screens/ErrorPage";
 import Home from "../screens/Home";
 import Login from "../screens/Login";
 
@@ -19,6 +20,12 @@ const routes: RouteType[] = [
     path: "/login",
     component: Login,
     name: "Login Screen",
+    protected: false,
+  },
+  {
+    path: "*",
+    component: ErrorPage,
+    name: "Error Screen",
     protected: false,
   },
 ];

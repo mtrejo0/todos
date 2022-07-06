@@ -29,7 +29,7 @@ function TodoListItem({ todo }: PropsTypes) {
   }
 
   return (
-    <Card sx={{ padding: "16px", margin: "8px" }}>
+    <Card sx={{ padding: "16px" }}>
       <Grid container spacing={12}>
         <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
           <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>

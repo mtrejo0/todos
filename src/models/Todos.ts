@@ -7,10 +7,11 @@ export default class Todos {
   static db_name = "todos"
   static todosCollection = collection(db, this.db_name) as CollectionReference<Todo>
 
-  static async add(task: string) {
+  static async add(task: string, tags: string[]) {
     try {
-      await addDoc(this.todosCollection, {
+      await addDoc(collection(db, this.db_name), {
         task,
+        tags,
         done: false
       });
     } catch (e) {
@@ -25,10 +26,6 @@ export default class Todos {
   static async update(todo: Todo, updated: any) {
     const ref = doc(db, this.db_name, todo.id!)
     setDoc(ref, { ...todo, ...updated })
-
-    // await deleteDoc(doc(db, this.db_name, id))
   }
 
 }
-
-
