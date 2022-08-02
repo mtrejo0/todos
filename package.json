@@ -1,20 +1,13 @@
 {
-  "name": "todos",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mtrejo0/todos.git"
+    "start": "cd server && npm run start",
+    "build": "cd frontend && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mtrejo0/todos/issues"
-  },
-  "homepage": "https://github.com/mtrejo0/todos#readme"
+  "license": "ISC"
 }
