@@ -1,5 +1,5 @@
 {
-  "name": "your-project-name2",
+  "name": "todos",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,6 +16,7 @@
     "@types/react": "^17.0.47",
     "@types/react-dom": "^17.0.17",
     "firebase": "^9.8.4",
+    "prettier": "^2.7.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-firebase-hooks": "^4.0.2",
@@ -33,7 +34,8 @@
     "build-and-serve": "npm run build && npm run serve",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "pull": "git pull && npm i && npm start"
+    "pull": "git pull && npm i && npm start",
+    "style": "prettier --write ."
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -1,35 +1,36 @@
-import { Box, Grid } from "@mui/material";
-import { onSnapshot, query } from "firebase/firestore";
+import { Stack } from "@mui/material";
+import { onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Todos from "../models/Todos"
+import Todos from "../models/Todos";
 import { Todo } from "../types/types";
 import TodoListItem from "./TodoListItem";
-
-import { db } from "../config/firebase";
-import { addDoc, collection, CollectionReference, deleteDoc, doc, setDoc } from "firebase/firestore";
-
+import { auth } from "../config/firebase";
 
 function TodosList() {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
-    const c = collection(db, "todos") as CollectionReference<Todo>
-    const q = query(c)
-    const unsubscribe = onSnapshot(c, (querySnapshot) => {
-      setTodos(querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })))
-    })
-    return () => unsubscribe()
-  }, [todos, setTodos])
+    const q = query(
+      Todos.todosCollection,
+      where("uid", "==", auth.currentUser?.uid)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setTodos(
+        querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+      );
+    });
+    return () => unsubscribe();
+  }, [setTodos]);
 
   return (
-    <Box sx={{ height: "40vh", overflowY: "scroll" }}>
-      <Grid spacing={12} container>
-        {todos.map((each, i) => <Grid item xs={4} key={i}><TodoListItem todo={each}></TodoListItem></Grid>)}
-      </Grid>
-    </Box>
+    <Stack spacing={1} sx={{ padding: "0 32px" }}>
+      {todos.map((each, i) => (
+        <TodoListItem key={i} todo={each}></TodoListItem>
+      ))}
+    </Stack>
   );
 }
 export default TodosList;

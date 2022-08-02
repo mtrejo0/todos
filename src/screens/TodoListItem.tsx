@@ -1,52 +1,46 @@
 import { Todo } from "../types/types";
-import Todos from "../models/Todos"
-import { Button, Card, Checkbox, Chip, Grid } from "@mui/material";
+import Todos from "../models/Todos";
+import { Box, Button, Card, Checkbox, Chip, Stack } from "@mui/material";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface PropsTypes {
-  todo?: Todo
+  todo: Todo;
 }
 
 function TodoListItem({ todo }: PropsTypes) {
-
-  const [edit, setEdit] = useState(false)
-
   const deleteTodo = () => {
-    Todos.delete(todo!.id!)
-  }
+    Todos.delete(todo!.id!);
+  };
 
   const editTodo = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const newValue = (e.target as HTMLInputElement).checked
-    Todos.update(todo!, { done: newValue })
-  }
-
-  const toggleEdit = () => {
-    setEdit(!edit)
-  }
+    const newValue = (e.target as HTMLInputElement).checked;
+    Todos.update(todo!, { done: newValue });
+  };
 
   return (
     <Card sx={{ padding: "16px" }}>
-      <Grid container spacing={12}>
-        <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
-          <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
-          <p>{todo?.task}</p>
-        </Grid>
-        <Grid item xs={6} sx={{ display: "flex", alignItems: "center" }}>
-          <Button onClick={deleteTodo} variant="contained"><DeleteIcon /></Button>
-          <Button onClick={toggleEdit} variant="contained" ><EditIcon /></Button>
-        </Grid>
-      </Grid>
-      <Grid container spacing={12}>
-        <Grid item xs={12}>
-          <Chip label="Chip Filled" />
-          <Chip label="Chip Filled" />
-          <Chip label="Chip Filled" />
-        </Grid>
-      </Grid>
+      <Stack>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Stack direction="row">
+            <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
+            <p>{todo?.task}</p>
+          </Stack>
+          <Button
+            onClick={deleteTodo}
+            variant="contained"
+            sx={{ height: "32px" }}
+          >
+            <DeleteIcon />
+          </Button>
+        </Box>
+        <Stack direction="row">
+          {todo?.tags?.map((each, i) => (
+            <Chip label={each} key={i} />
+          ))}
+        </Stack>
+      </Stack>
     </Card>
   );
 }
