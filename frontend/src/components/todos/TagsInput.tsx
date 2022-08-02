@@ -1,6 +1,6 @@
 import { Chip, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { EventBus } from "../event-bus/event-bus";
+import { EventBus } from "../../event-bus/event-bus";
 
 export const TagInput = () => {
   const [tags, setTags] = useState<string[]>([]);

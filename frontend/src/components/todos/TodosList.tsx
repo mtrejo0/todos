@@ -1,15 +1,16 @@
 import { Stack } from "@mui/material";
 import { onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Todos from "../models/Todos";
-import { Todo } from "../types/types";
+import Todos from "../../models/Todos";
+import { Todo } from "../../types/types";
 import TodoListItem from "./TodoListItem";
-import { auth } from "../config/firebase";
+import { auth } from "../../config/firebase";
 
 function TodosList() {
   const [todos, setTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
+    if (!auth.currentUser || !auth.currentUser?.uid) return;
     const q = query(
       Todos.todosCollection,
       where("uid", "==", auth.currentUser?.uid)

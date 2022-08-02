@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@material-ui/core/TextField";
-import Todos from "../models/Todos";
+import Todos from "../../models/Todos";
 import { TagInput } from "./TagsInput";
 import { Button, Card, Stack } from "@mui/material";
-import { EventBus } from "../event-bus/event-bus";
-import Center from "../components/utils/Center";
+import { EventBus } from "../../event-bus/event-bus";
+import Center from "../utils/Center";
 
 function TodoForm() {
   const [value, setValue] = useState("");

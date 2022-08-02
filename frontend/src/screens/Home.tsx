@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
-import TodoForm from "./AddTodos";
-import ResponsiveAppBar from "./NavBar";
-import TodosList from "./TodosList";
+import TodoForm from "../components/todos/AddTodos";
+import ResponsiveAppBar from "../components/NavBar";
+import TodosList from "../components/todos/TodosList";
 
 const Home = () => {
   return (
