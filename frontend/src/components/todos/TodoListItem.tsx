@@ -40,7 +40,7 @@ function TodoListItem({ todo }: PropsTypes) {
                 <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
                 <p>{todo?.task}</p>
               </Stack>
-              <Stack direction="row" spacing={1}>
+              <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
                 <ConfirmActionModal
                   button={
                     <Button
