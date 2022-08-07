@@ -12,5 +12,4 @@ To start
 cd frontend
 npm ci
 npm start
-
 ```
