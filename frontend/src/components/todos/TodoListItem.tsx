@@ -8,6 +8,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { useEffect, useState } from "react";
 import EditTodoListItem from "./EditTodoListItem";
 import { EventBus } from "../../event-bus/event-bus";
+import ConfirmActionModal from "../utils/ConfirmActionModal";
 
 interface PropsTypes {
   todo: Todo;
@@ -15,9 +16,6 @@ interface PropsTypes {
 
 function TodoListItem({ todo }: PropsTypes) {
   const [edit, setEdit] = useState(false);
-  const deleteTodo = () => {
-    Todos.delete(todo!.id!);
-  };
 
   const editTodo = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -30,58 +28,65 @@ function TodoListItem({ todo }: PropsTypes) {
       setEdit(false);
     });
   });
-
   return (
     <>
-      <Card sx={{ padding: "16px" }}>
-        <Stack>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Stack direction="row">
-              <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
-              {edit ? (
-                <EditTodoListItem todo={todo}></EditTodoListItem>
-              ) : (
+      {edit ? (
+        <EditTodoListItem todo={todo}></EditTodoListItem>
+      ) : (
+        <Card sx={{ padding: "16px" }}>
+          <Stack>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Stack direction="row">
+                <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
                 <p>{todo?.task}</p>
-              )}
-            </Stack>
-            <Stack direction="row">
-              <Button
-                onClick={deleteTodo}
-                variant="contained"
-                sx={{ height: "32px" }}
-              >
-                <DeleteIcon />
-              </Button>
-              {edit ? (
-                <Button
-                  onClick={() =>
-                    EventBus.getInstance().dispatch<string[]>(
-                      `save-todo-${todo.id}`
-                    )
+              </Stack>
+              <Stack direction="row" spacing={1}>
+                <ConfirmActionModal
+                  button={
+                    <Button
+                      variant="contained"
+                      color="error"
+                      sx={{ height: "32px" }}
+                    >
+                      <DeleteIcon />
+                    </Button>
                   }
-                  variant="contained"
-                  sx={{ height: "32px" }}
-                >
-                  <SaveIcon />
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => setEdit(true)}
-                  variant="contained"
-                  sx={{ height: "32px" }}
-                >
-                  <EditIcon />
-                </Button>
-              )}
+                  callback={() => {
+                    Todos.delete(todo!.id!);
+                  }}
+                />
+
+                {edit ? (
+                  <Button
+                    onClick={() =>
+                      EventBus.getInstance().dispatch<string[]>(
+                        `save-todo-${todo.id}`
+                      )
+                    }
+                    variant="contained"
+                    sx={{ height: "32px" }}
+                  >
+                    <SaveIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setEdit(true)}
+                    variant="contained"
+                    sx={{ height: "32px" }}
+                  >
+                    <EditIcon />
+                  </Button>
+                )}
+              </Stack>
+            </Box>
+            <Stack direction="row">
+              {todo?.tags?.map((each, i) => (
+                <Chip label={each} key={i} />
+              ))}
             </Stack>
-          </Box>
-          <Stack direction="row">
-            {todo?.tags?.map((each, i) => (
-              <Chip label={each} key={i} />
-            ))}
           </Stack>
-        </Stack>
-      </Card>
+        </Card>
+      )}
     </>
   );
 }

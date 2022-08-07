@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div>
       <ResponsiveAppBar></ResponsiveAppBar>
-      <Stack spacing={8}>
+      <Stack spacing={4}>
         <TodoForm />
         <TodosList />
       </Stack>

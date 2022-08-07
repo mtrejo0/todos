@@ -1,55 +1,117 @@
-import { Chip, Stack, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import Chip from "@material-ui/core/Chip";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Downshift from "downshift";
 import { EventBus } from "../../event-bus/event-bus";
 
-export const TagInput = () => {
-  const [tags, setTags] = useState<string[]>([]);
+const useStyles = makeStyles((theme) => ({
+  chip: {
+    margin: theme.spacing(0.5, 0.25),
+  },
+}));
+
+export default function TagsInput({ ...props }) {
+  const classes = useStyles();
+  const { selectedTags, placeholder, tags, ...other } = props;
+  const [inputValue, setInputValue] = React.useState("");
+  const [selectedItem, setSelectedItem] = React.useState([]);
 
   useEffect(() => {
     EventBus.getInstance().register("clear-tags", () => {
-      setTags([]);
+      setSelectedItem([]);
     });
   }, []);
 
-  const addTags = (event: any) => {
-    if (event.key === "Enter" && event.target.value !== "") {
-      const newTags = [...tags, event.target.value];
-      setTags(newTags);
-      event.target.value = "";
-      EventBus.getInstance().dispatch<string[]>("update-tags", newTags);
+  useEffect(() => {
+    setSelectedItem(tags);
+  }, [tags]);
+  useEffect(() => {
+    selectedTags(selectedItem);
+  }, [selectedItem, selectedTags]);
+
+  function handleKeyDown(event: any) {
+    if (event.key === "Enter") {
+      const newSelectedItem = [...selectedItem];
+      const duplicatedValues = newSelectedItem.indexOf(
+        event.target.value.trim() as never
+      );
+
+      if (duplicatedValues !== -1) {
+        setInputValue("");
+        return;
+      }
+      if (!event.target.value.replace(/\s/g, "").length) return;
+
+      newSelectedItem.push(event.target.value.trim() as never);
+      setSelectedItem(newSelectedItem);
+      setInputValue("");
     }
-    if (event.key === "Backspace") {
-      const newTags = [
-        ...tags.filter((tag) => tags.indexOf(tag) !== tags.length - 1),
-      ];
-      setTags(newTags);
-      EventBus.getInstance().dispatch<string[]>("update-tags", newTags);
+    if (
+      selectedItem.length &&
+      !inputValue.length &&
+      event.key === "Backspace"
+    ) {
+      setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
     }
+  }
+
+  const handleDelete = (item: never) => () => {
+    const newSelectedItem = [...selectedItem];
+    newSelectedItem.splice(newSelectedItem.indexOf(item), 1);
+    setSelectedItem(newSelectedItem);
   };
 
-  const removeTags = (index: number) => {
-    setTags([...tags.filter((tag) => tags.indexOf(tag) !== index)]);
-    EventBus.getInstance().dispatch<string[]>("update-tags", tags);
-  };
-
-  const TagInput = (
-    <Stack spacing={1}>
-      <TextField
-        onKeyDown={(event) => addTags(event)}
-        label="Add Tags"
-      ></TextField>
-      <Stack direction="row" spacing={1}>
-        {tags.map((tag, index) => (
-          <Chip
-            key={index}
-            tabIndex={-1}
-            label={tag}
-            onDelete={() => removeTags(index)}
-          />
-        ))}
-      </Stack>
-    </Stack>
+  function handleInputChange(event: any) {
+    setInputValue(event.target.value);
+  }
+  return (
+    <React.Fragment>
+      <Downshift
+        id="downshift-multiple"
+        inputValue={inputValue}
+        selectedItem={selectedItem}
+      >
+        {({ getInputProps }: any) => {
+          const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
+            onKeyDown: handleKeyDown,
+            placeholder,
+          });
+          return (
+            <div>
+              <TextField
+                InputProps={{
+                  startAdornment: selectedItem.map((item) => (
+                    <Chip
+                      key={item}
+                      tabIndex={-1}
+                      label={item}
+                      className={classes.chip}
+                      onDelete={handleDelete(item)}
+                    />
+                  )),
+                  onBlur,
+                  onChange: (event) => {
+                    handleInputChange(event);
+                    onChange(event);
+                  },
+                  onFocus,
+                }}
+                {...other}
+                {...inputProps}
+              />
+            </div>
+          );
+        }}
+      </Downshift>
+    </React.Fragment>
   );
-
-  return TagInput;
+}
+TagsInput.defaultProps = {
+  tags: [],
+};
+TagsInput.propTypes = {
+  selectedTags: PropTypes.func.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string),
 };
