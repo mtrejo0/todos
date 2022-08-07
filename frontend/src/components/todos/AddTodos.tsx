@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Todos from "../../models/Todos";
-import TagsInput from "./TagsInput";
 import { Button, Card, Stack } from "@mui/material";
 import { EventBus } from "../../event-bus/event-bus";
 import Center from "../utils/Center";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { NotificationType } from "../utils/NotificationManager";
+import Tags from "./TagsInput";
 
 export const taskValidationSchema = yup.object({
   task: yup.string().required("Task name is required"),
 });
 
-function TodoForm() {
+function TodoForm({ ...props }) {
+  const { autocompleteTags } = props;
+
   const [tags, setTags] = useState<string[]>([]);
 
   const formik = useFormik({
@@ -53,12 +55,12 @@ function TodoForm() {
             error={formik.touched.task && Boolean(formik.errors.task)}
             helperText={formik.touched.task && formik.errors.task}
           />
-          <TagsInput
-            placeholder="Add Tags"
-            selectedTags={(newTags: string[]) => setTags(newTags)}
-            style={{ width: "100%" }}
-            variant={"outlined"}
-          />
+          <Tags
+            selectedTags={(newTags: string[]) => {
+              setTags(newTags);
+            }}
+            autocompleteTags={autocompleteTags}
+          ></Tags>
           <Button
             variant="contained"
             type="submit"

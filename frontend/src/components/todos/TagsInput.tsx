@@ -1,117 +1,52 @@
 import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import Chip from "@material-ui/core/Chip";
-import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Downshift from "downshift";
-import { EventBus } from "../../event-bus/event-bus";
+import { Autocomplete, AutocompleteRenderInputParams } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
-  chip: {
-    margin: theme.spacing(0.5, 0.25),
-  },
-}));
-
-export default function TagsInput({ ...props }) {
-  const classes = useStyles();
-  const { selectedTags, placeholder, tags, ...other } = props;
-  const [inputValue, setInputValue] = React.useState("");
-  const [selectedItem, setSelectedItem] = React.useState([]);
+export default function Tags({ ...props }) {
+  const { selectedTags, autocompleteTags, defaultTags, ...other } = props;
+  const [value, setValue] = React.useState<string[]>(defaultTags ?? []);
 
   useEffect(() => {
-    EventBus.getInstance().register("clear-tags", () => {
-      setSelectedItem([]);
-    });
-  }, []);
+    selectedTags(value);
+  }, [value, selectedTags]);
 
-  useEffect(() => {
-    setSelectedItem(tags);
-  }, [tags]);
-  useEffect(() => {
-    selectedTags(selectedItem);
-  }, [selectedItem, selectedTags]);
-
-  function handleKeyDown(event: any) {
-    if (event.key === "Enter") {
-      const newSelectedItem = [...selectedItem];
-      const duplicatedValues = newSelectedItem.indexOf(
-        event.target.value.trim() as never
-      );
-
-      if (duplicatedValues !== -1) {
-        setInputValue("");
-        return;
+  const handleKeyDown = (event: any) => {
+    switch (event.key) {
+      case ",":
+      case " ": {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.target.value.length > 0) {
+          setValue([...value, event.target.value]);
+        }
+        break;
       }
-      if (!event.target.value.replace(/\s/g, "").length) return;
-
-      newSelectedItem.push(event.target.value.trim() as never);
-      setSelectedItem(newSelectedItem);
-      setInputValue("");
+      default:
     }
-    if (
-      selectedItem.length &&
-      !inputValue.length &&
-      event.key === "Backspace"
-    ) {
-      setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
-    }
-  }
-
-  const handleDelete = (item: never) => () => {
-    const newSelectedItem = [...selectedItem];
-    newSelectedItem.splice(newSelectedItem.indexOf(item), 1);
-    setSelectedItem(newSelectedItem);
   };
-
-  function handleInputChange(event: any) {
-    setInputValue(event.target.value);
-  }
   return (
-    <React.Fragment>
-      <Downshift
-        id="downshift-multiple"
-        inputValue={inputValue}
-        selectedItem={selectedItem}
-      >
-        {({ getInputProps }: any) => {
-          const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
-            onKeyDown: handleKeyDown,
-            placeholder,
-          });
-          return (
-            <div>
-              <TextField
-                InputProps={{
-                  startAdornment: selectedItem.map((item) => (
-                    <Chip
-                      key={item}
-                      tabIndex={-1}
-                      label={item}
-                      className={classes.chip}
-                      onDelete={handleDelete(item)}
-                    />
-                  )),
-                  onBlur,
-                  onChange: (event) => {
-                    handleInputChange(event);
-                    onChange(event);
-                  },
-                  onFocus,
-                }}
-                {...other}
-                {...inputProps}
-              />
-            </div>
-          );
+    <div {...other}>
+      <Autocomplete
+        multiple
+        freeSolo
+        id="tags-outlined"
+        options={autocompleteTags ?? []}
+        getOptionLabel={(option) => {
+          if (typeof option === "string") {
+            return option;
+          }
+          return "";
         }}
-      </Downshift>
-    </React.Fragment>
+        value={value}
+        onChange={(event, newValue) => setValue(newValue as string[])}
+        filterSelectedOptions
+        renderInput={(params: AutocompleteRenderInputParams) => {
+          params.inputProps.onKeyDown = handleKeyDown;
+          return (
+            <TextField {...params} variant="outlined" label="Add Tags" />
+          ) as React.ReactNode;
+        }}
+      />
+    </div>
   );
 }
-TagsInput.defaultProps = {
-  tags: [],
-};
-TagsInput.propTypes = {
-  selectedTags: PropTypes.func.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string),
-};

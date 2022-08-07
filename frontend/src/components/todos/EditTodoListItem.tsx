@@ -47,7 +47,7 @@ function TodoListItem({ todo }: PropsTypes) {
               checked={newDone}
               onClick={() => setNewDone((s) => !s)}
             ></Checkbox>
-            <Stack sx={{ width: { sm: "100%", md: "500px" } }}>
+            <Stack sx={{ width: { sm: "100%", md: "500px" } }} spacing={1}>
               <TextField
                 id="task"
                 value={formik.values.task}
@@ -57,7 +57,7 @@ function TodoListItem({ todo }: PropsTypes) {
               ></TextField>
               <TagsInput
                 placeholder="Edit Tags"
-                tags={todo.tags}
+                defaultTags={todo.tags}
                 selectedTags={(tags: string[]) => setNewTags(tags)}
                 style={{ width: "100%" }}
                 variant={"outlined"}
@@ -68,7 +68,7 @@ function TodoListItem({ todo }: PropsTypes) {
             type="submit"
             variant="contained"
             sx={{ height: "32px" }}
-            onClick={() => formik.handleSubmit}
+            onClick={() => formik.handleSubmit()}
           >
             <SaveIcon />
           </Button>

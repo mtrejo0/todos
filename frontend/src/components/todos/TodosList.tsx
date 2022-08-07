@@ -5,7 +5,8 @@ import Todos from "../../models/Todos";
 import { Todo } from "../../types/types";
 import TodoListItem from "./TodoListItem";
 import { auth } from "../../config/firebase";
-import TagsInput from "./TagsInput";
+import TodoForm from "./AddTodos";
+import Tags from "./TagsInput";
 
 function TodosList() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -40,26 +41,41 @@ function TodosList() {
     return displayTodos;
   };
 
+  const getPreviousTags = () => {
+    const previousTags = new Set();
+
+    todos.forEach((each) => {
+      each.tags.forEach((tag) => {
+        previousTags.add(tag);
+      });
+    });
+
+    return Array.from(previousTags);
+  };
+
   return (
     <Stack spacing={1} sx={{ padding: "0 32px" }}>
+      <TodoForm autocompleteTags={getPreviousTags()} />
       <Card sx={{ padding: "16px" }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={1}
           alignItems="center"
         >
-          <Typography>Sort By: </Typography>
+          <Typography minWidth={"100px"}>Sort By: </Typography>
           <TextField
             label="Keyword"
             value={keyword}
             onChange={(e: any) => setKeyword(e.target.value)}
-          />
-          <TagsInput
-            placeholder="Add Tags"
-            selectedTags={(newTags: string[]) => setSearchTags(newTags)}
             style={{ width: "100%" }}
-            variant={"outlined"}
           />
+          <Tags
+            selectedTags={(newTags: string[]) => {
+              setSearchTags(newTags);
+            }}
+            autocompleteTags={getPreviousTags()}
+            style={{ width: "100%" }}
+          ></Tags>
         </Stack>
       </Card>
 

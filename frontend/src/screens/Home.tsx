@@ -1,5 +1,4 @@
-import { Stack } from "@mui/material";
-import TodoForm from "../components/todos/AddTodos";
+import { Box } from "@mui/material";
 import ResponsiveAppBar from "../components/NavBar";
 import TodosList from "../components/todos/TodosList";
 
@@ -7,10 +6,9 @@ const Home = () => {
   return (
     <div>
       <ResponsiveAppBar></ResponsiveAppBar>
-      <Stack spacing={4}>
-        <TodoForm />
+      <Box sx={{ marginTop: "32px" }}>
         <TodosList />
-      </Stack>
+      </Box>
     </div>
   );
 };
