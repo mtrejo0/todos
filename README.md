@@ -1,4 +1,4 @@
-# todos
+# free write
 
 
 This is a firebase, MUI, ReactJS application for TODOs!
