@@ -14,9 +14,6 @@ const style = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-  display: "flex",
-  alignItems: "center",
-  flexDirection: "column",
 };
 
 export default function ConfirmActionModal(props: {
@@ -41,9 +38,8 @@ export default function ConfirmActionModal(props: {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Are you sure?
           </Typography>
-          <Stack direction={"row"} spacing={2} sx={{ marginTop: "16px" }}>
+          <Stack direction={"row"}>
             <Button
-              variant="contained"
               onClick={() => {
                 callback();
                 handleClose();
@@ -51,7 +47,7 @@ export default function ConfirmActionModal(props: {
             >
               Confirm
             </Button>
-            <Button color="error" variant="contained" onClick={handleClose}>
+            <Button color="error" onClick={handleClose}>
               Cancel
             </Button>
           </Stack>

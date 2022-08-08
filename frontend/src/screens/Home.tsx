@@ -1,13 +1,13 @@
 import { Box } from "@mui/material";
 import ResponsiveAppBar from "../components/NavBar";
-import FreeWritesList from "../components/freeWrites/FreeWritesList";
+import TodosList from "../components/todos/TodosList";
 
 const Home = () => {
   return (
     <div>
       <ResponsiveAppBar></ResponsiveAppBar>
       <Box sx={{ marginTop: "32px" }}>
-        <FreeWritesList />
+        <TodosList />
       </Box>
     </div>
   );

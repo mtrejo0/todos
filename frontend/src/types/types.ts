@@ -1,10 +1,6 @@
-export interface FreeWrite {
+export interface Todo {
   id?: string;
-  text: string;
+  task: string;
+  done: boolean;
   tags: Array<string>;
-}
-
-export interface Prompt {
-  id?: string;
-  prompt: string;
 }

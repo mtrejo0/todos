@@ -1,33 +1,44 @@
-import { FreeWrite } from "../../types/types";
-import FreeWrites from "../../models/FreeWrites";
-import { Box, Button, Card, Chip, Stack } from "@mui/material";
+import { Todo } from "../../types/types";
+import Todos from "../../models/Todos";
+import { Box, Button, Card, Checkbox, Chip, Stack } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { useEffect, useState } from "react";
-import EditFreeWritesListItem from "./EditFreeWritesListItem";
+import EditTodoListItem from "./EditTodoListItem";
 import { EventBus } from "../../event-bus/event-bus";
 import ConfirmActionModal from "../utils/ConfirmActionModal";
 
-function FreeWritesListItem({ freeWrite }: { freeWrite: FreeWrite }) {
+interface PropsTypes {
+  todo: Todo;
+}
+
+function TodoListItem({ todo }: PropsTypes) {
   const [edit, setEdit] = useState(false);
 
+  const editTodo = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    const newValue = (e.target as HTMLInputElement).checked;
+    Todos.update(todo!, { done: newValue });
+  };
+
   useEffect(() => {
-    EventBus.getInstance().register(`save-free-write-${freeWrite.id}`, () => {
+    EventBus.getInstance().register(`save-todo-${todo.id}`, () => {
       setEdit(false);
     });
   });
   return (
     <>
       {edit ? (
-        <EditFreeWritesListItem freeWrite={freeWrite}></EditFreeWritesListItem>
+        <EditTodoListItem todo={todo}></EditTodoListItem>
       ) : (
         <Card sx={{ padding: "16px" }}>
           <Stack>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Stack direction="row">
-                <p>{freeWrite?.text}</p>
+                <Checkbox checked={todo?.done} onClick={editTodo}></Checkbox>
+                <p>{todo?.task}</p>
               </Stack>
               <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
                 <ConfirmActionModal
@@ -41,7 +52,7 @@ function FreeWritesListItem({ freeWrite }: { freeWrite: FreeWrite }) {
                     </Button>
                   }
                   callback={() => {
-                    FreeWrites.delete(freeWrite!.id!);
+                    Todos.delete(todo!.id!);
                   }}
                 />
 
@@ -49,7 +60,7 @@ function FreeWritesListItem({ freeWrite }: { freeWrite: FreeWrite }) {
                   <Button
                     onClick={() =>
                       EventBus.getInstance().dispatch<string[]>(
-                        `save-free-write-${freeWrite.id}`
+                        `save-todo-${todo.id}`
                       )
                     }
                     variant="contained"
@@ -69,7 +80,7 @@ function FreeWritesListItem({ freeWrite }: { freeWrite: FreeWrite }) {
               </Stack>
             </Box>
             <Stack direction="row">
-              {freeWrite?.tags?.map((each, i) => (
+              {todo?.tags?.map((each, i) => (
                 <Chip label={each} key={i} />
               ))}
             </Stack>
@@ -79,4 +90,4 @@ function FreeWritesListItem({ freeWrite }: { freeWrite: FreeWrite }) {
     </>
   );
 }
-export default FreeWritesListItem;
+export default TodoListItem;

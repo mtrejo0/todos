@@ -1,26 +1,26 @@
 import { Card, Stack, TextField, Typography } from "@mui/material";
 import { onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import FreeWrites from "../../models/FreeWrites";
-import { FreeWrite } from "../../types/types";
-import FreeWritesListItem from "./FreeWritesListItem";
+import Todos from "../../models/Todos";
+import { Todo } from "../../types/types";
+import TodoListItem from "./TodoListItem";
 import { auth } from "../../config/firebase";
-import AddFreeWrites from "./AddFreeWrites";
+import TodoForm from "./AddTodos";
 import Tags from "./TagsInput";
 
-function FreeWritesList() {
-  const [freeWrites, setFreeWrites] = useState<FreeWrite[]>([]);
+function TodosList() {
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [keyword, setKeyword] = useState<string>("");
   const [searchTags, setSearchTags] = useState<string[]>([]);
 
   useEffect(() => {
     if (!auth.currentUser || !auth.currentUser?.uid) return;
     const q = query(
-      FreeWrites.freeWritesCollection,
+      Todos.todosCollection,
       where("uid", "==", auth.currentUser?.uid)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setFreeWrites(
+      setTodos(
         querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -28,36 +28,34 @@ function FreeWritesList() {
       );
     });
     return () => unsubscribe();
-  }, [setFreeWrites]);
+  }, [setTodos]);
 
-  const getDisplayFreeWrites = () => {
-    let displayFreeWrites = freeWrites.filter((each) =>
-      each.text.includes(keyword)
-    );
+  const getDisplayTodos = () => {
+    let displayTodos = todos.filter((each) => each.task.includes(keyword));
 
     if (searchTags.length > 0)
-      displayFreeWrites = displayFreeWrites.filter((each) =>
+      displayTodos = displayTodos.filter((each) =>
         each.tags.some((tag) => searchTags.includes(tag))
       );
 
-    return displayFreeWrites;
+    return displayTodos;
   };
 
-  const getPreviousTags = (): string[] => {
+  const getPreviousTags = () => {
     const previousTags = new Set();
 
-    freeWrites.forEach((each) => {
+    todos.forEach((each) => {
       each.tags.forEach((tag) => {
         previousTags.add(tag);
       });
     });
 
-    return Array.from(previousTags) as string[];
+    return Array.from(previousTags);
   };
 
   return (
     <Stack spacing={1} sx={{ padding: "0 32px" }}>
-      <AddFreeWrites autocompleteTags={getPreviousTags()} />
+      <TodoForm autocompleteTags={getPreviousTags()} />
       <Card sx={{ padding: "16px" }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -81,19 +79,19 @@ function FreeWritesList() {
         </Stack>
       </Card>
 
-      <Typography variant="h5">My Free Writes:</Typography>
+      <Typography variant="h5">TODOs:</Typography>
 
-      {freeWrites.length === 0 ? (
-        <Typography>You have no free writes add some!</Typography>
+      {todos.length === 0 ? (
+        <Typography>You have no todos add some!</Typography>
       ) : (
-        getDisplayFreeWrites().length === 0 && (
+        getDisplayTodos().length === 0 && (
           <Typography>This search has 0 results</Typography>
         )
       )}
-      {getDisplayFreeWrites().map((each, i) => (
-        <FreeWritesListItem key={i} freeWrite={each}></FreeWritesListItem>
+      {getDisplayTodos().map((each, i) => (
+        <TodoListItem key={i} todo={each}></TodoListItem>
       ))}
     </Stack>
   );
 }
-export default FreeWritesList;
+export default TodosList;

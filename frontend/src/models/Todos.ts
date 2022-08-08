@@ -7,20 +7,22 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { Prompt } from "../types/types";
+import { Todo } from "../types/types";
 import { auth } from "../config/firebase";
 
-export default class Prompts {
-  static db_name = "prompts";
-  static promptsCollection = collection(
+export default class Todos {
+  static db_name = "todos";
+  static todosCollection = collection(
     db,
     this.db_name
-  ) as CollectionReference<Prompt>;
+  ) as CollectionReference<Todo>;
 
-  static async add(prompt: string) {
+  static async add(task: string, tags: string[]) {
     try {
       await addDoc(collection(db, this.db_name), {
-        prompt,
+        task,
+        tags,
+        done: false,
         uid: auth.currentUser?.uid,
       });
     } catch (e) {
@@ -32,8 +34,8 @@ export default class Prompts {
     await deleteDoc(doc(db, this.db_name, id));
   }
 
-  static async update(prompt: Prompt, updated: any) {
-    const ref = doc(db, this.db_name, prompt.id!);
-    setDoc(ref, { ...prompt, ...updated });
+  static async update(todo: Todo, updated: any) {
+    const ref = doc(db, this.db_name, todo.id!);
+    setDoc(ref, { ...todo, ...updated });
   }
 }
