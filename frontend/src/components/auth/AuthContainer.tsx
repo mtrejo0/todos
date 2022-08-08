@@ -18,7 +18,6 @@ const AuthContainer = (props: Props) => {
     signInWithPopup(auth, Providers.google)
       .then(() => {
         setDisabled(false);
-        console.info("TODO: navigate to authenticated screen");
         navigate("/");
       })
       .catch((error) => {

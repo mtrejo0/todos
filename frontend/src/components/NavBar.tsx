@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../config/firebase";
 import { useEffect, useState } from "react";
 
-const pages = ["Todos"];
+const pages = [{ name: "Free Write", route: "/" }];
 const settings = ["Logout"];
 
 const ResponsiveAppBar = () => {
@@ -32,9 +32,6 @@ const ResponsiveAppBar = () => {
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
@@ -99,8 +96,14 @@ const ResponsiveAppBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page.name}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    navigate(page.route);
+                  }}
+                >
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -108,18 +111,26 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.name}
+                onClick={() => {
+                  handleCloseNavMenu();
+                  navigate(page.route);
+                }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton
+                onClick={() => {
+                  navigate("/account");
+                }}
+                sx={{ p: 0 }}
+              >
                 <Avatar alt={displayName} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>

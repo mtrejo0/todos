@@ -1,13 +1,29 @@
 import React, { useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Autocomplete, AutocompleteRenderInputParams } from "@mui/material";
+import { EventBus } from "../../event-bus/event-bus";
 
-export default function Tags({ ...props }) {
-  const { selectedTags, autocompleteTags, defaultTags, ...other } = props;
+export default function Tags({
+  selectedTags,
+  autocompleteTags,
+  defaultTags,
+  ...other
+}: {
+  selectedTags: any;
+  autocompleteTags?: string[];
+  defaultTags?: string[];
+  [x: string]: any;
+}) {
   const [value, setValue] = React.useState<string[]>(defaultTags ?? []);
 
   useEffect(() => {
     selectedTags(value);
+  }, [value, selectedTags]);
+
+  useEffect(() => {
+    EventBus.getInstance().register("clear-tags", () => {
+      setValue([]);
+    });
   }, [value, selectedTags]);
 
   const handleKeyDown = (event: any) => {
